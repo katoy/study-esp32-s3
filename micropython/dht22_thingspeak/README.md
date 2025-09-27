@@ -1,4 +1,12 @@
+
 # ESP32-S3 DHT22 Environmental Monitor
+
+## スクリーンショット
+
+<div align="center">
+  <img src="images/screen-001.png" alt="画面例1" width="400" />
+  <img src="images/screen-002.png" alt="画面例2" width="400" />
+</div>
 
 Thonny IDE 対応の MicroPython IoT 環境監視システム。ESP32-S3 + DHT22 で温湿度を計測し、HTTP API でフロントエンドに配信します。NTP による JST 時刻、ThingSpeak 連携（JST スロット整列）、軽量 UI（app.js / style.css のみ）を備えています。
 
