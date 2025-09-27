@@ -13,6 +13,7 @@ Thonny IDE 対応の MicroPython IoT 環境監視システム。ESP32-S3 + DHT22
 ## 目次
 
 - [ESP32-S3 DHT22 Environmental Monitor](#esp32-s3-dht22-environmental-monitor)
+  - [スクリーンショット](#スクリーンショット)
   - [目次](#目次)
   - [主な機能](#主な機能)
   - [ファイル構成（要点）](#ファイル構成要点)
