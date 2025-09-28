@@ -1,0 +1,114 @@
+# =============================================================================
+# ESP32-S3 MicroPython DHT11 Monitor Project - .gitignore
+# =============================================================================
+
+# 🔐 機密情報・認証情報（絶対に公開しない）
+wifi_config.py                    # WiFi接続情報とThingSpeak API Key
+config.py                         # 追加設定ファイル（もしある場合）
+secrets.py                        # シークレット情報
+*.key                             # 証明書・キーファイル
+*.pem                             # SSL証明書
+
+# 🐍 Python・MicroPythonバイトコード
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 💻 IDE・エディタ設定ファイル
+.vscode/                          # Visual Studio Code
+.idea/                            # PyCharm/IntelliJ
+*.swp                             # Vim
+*.swo                             # Vim
+*~                                # Emacs
+.spyderproject                    # Spyder
+.spyproject                       # Spyder
+
+# 🔧 Thonny IDE関連
+.thonny/                          # Thonny設定
+*.thonny                          # Thonnyプロジェクトファイル
+thonny_config.txt                 # Thonny設定バックアップ
+
+# 🖥️ OS固有ファイル
+.DS_Store                         # macOS
+.DS_Store?                        # macOS
+._*                               # macOS
+.Spotlight-V100                   # macOS
+.Trashes                          # macOS
+ehthumbs.db                       # Windows
+Thumbs.db                         # Windows
+Desktop.ini                       # Windows
+$RECYCLE.BIN/                     # Windows
+
+# 📊 ログ・データファイル
+*.log                             # ログファイル
+*.txt                             # テキストデータ（重要でない場合）
+data/                             # データディレクトリ
+logs/                             # ログディレクトリ
+sensor_data.csv                   # センサーデータCSV
+measurements.json                 # 測定データJSON
+
+# 🔄 一時ファイル・バックアップ
+*.tmp                             # 一時ファイル
+*.temp                            # 一時ファイル
+*.bak                             # バックアップファイル
+*.backup                          # バックアップファイル
+*.old                             # 古いファイル
+*~                                # バックアップ
+
+# 📦 パッケージ・依存関係（必要に応じて）
+node_modules/                     # Node.js（もしフロントエンド開発する場合）
+.npm                              # npm
+package-lock.json                 # npm（チームで固定したい場合以外）
+
+# 🔍 テスト・カバレッジ
+.coverage                         # Python coverage
+.pytest_cache/                    # pytest
+.tox/                             # tox
+htmlcov/                          # coverage HTML report
+
+# 🌐 Webブラウザキャッシュ・開発ファイル
+.cache/                           # 各種キャッシュ
+cache/                            # キャッシュディレクトリ
+
+# 📝 ドキュメント生成
+docs/_build/                      # Sphinx
+.readthedocs.yml                  # Read the Docs（プロジェクト固有でない場合）
+
+# 🔧 環境固有設定
+.env                              # 環境変数ファイル
+.env.local                        # ローカル環境変数
+.env.*.local                      # 環境別設定
+instance/                         # Flask instance folder
+
+# 🚀 デプロイ・CI/CD
+.github/                          # GitHub Actions（必要に応じて）
+.gitlab-ci.yml                    # GitLab CI（プロジェクト固有でない場合）
+docker-compose.override.yml       # Docker開発用オーバーライド
+
+# 🎯 プロジェクト固有の除外ファイル
+# （以下は必要に応じてコメントアウト）
+# main_old.py                     # 古いメインファイル
+# test_*.py                       # テストファイル（残したい場合）
+# chart.html                      # 大きなチャートファイル（生成される場合）
+
+# =============================================================================
+# 注意: wifi_config.template.py は含めない（テンプレートとして必要）
+# =============================================================================

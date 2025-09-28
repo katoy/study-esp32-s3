@@ -1,0 +1,27 @@
+{
+  "name": "DHT22 Environmental Monitor",
+  "short_name": "DHT22 Monitor",
+  "description": "ESP32-S3 DHT22 温湿度センサーのリアルタイム監視システム",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0e1116",
+  "theme_color": "#5aa2ff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%230e1116' width='192' height='192' rx='20'/%3E%3Cpath fill='%235aa2ff' d='M96 32l21 36h39l-31.8 24 12 41.4L96 106.2l-40.2 27.2L68 92.4 36.2 68h39L96 32z'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect fill='%230e1116' width='512' height='512' rx='55'/%3E%3Cpath fill='%235aa2ff' d='M256 85l56 96h104l-84.8 64 32 110.4L256 283.2l-107.2 72.2L181 245l-84.8-64h104L256 85z'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities", "developer"],
+  "lang": "ja",
+  "dir": "ltr"
+}
