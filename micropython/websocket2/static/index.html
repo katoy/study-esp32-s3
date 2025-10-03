@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="ESP32-S3 DHT22 温湿度センサーのリアルタイムモニタリング" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <title>DHT22 Environmental Monitor</title>
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%235aa2ff' d='M12 2l3.5 6h6.5l-5.3 4 2 7-6.7-4.5L5.3 19l2-7L2 8h6.5L12 2z'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="brand">
+        <svg viewBox="0 0 24 24" class="logo">
+          <path d="M12 2l3.5 6h6.5l-5.3 4 2 7-6.7-4.5L5.3 19l2-7L2 8h6.5L12 2z"/>
+        </svg>
+        <div>
+          <h1 class="title">DHT22 Monitor</h1>
+          <p class="subtitle">Environmental Sensing</p>
+        </div>
+      </div>
+      <div class="status-group">
+        <div class="status">
+          <span id="status-dot" class="status-dot gray"></span>
+          <span id="status-text">接続待機中</span>
+        </div>
+        <div class="interval-status">
+          <span id="interval-text">更新間隔: --秒</span>
+        </div>
+        <div class="timestamp">
+          <span id="last-update">最終更新: --</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      <!-- メインセンサー値表示 -->
+      <section class="sensor-grid" aria-labelledby="sensors-title">
+        <h2 id="sensors-title" class="visually-hidden">現在のセンサー値</h2>
+        <div class="sensor-card temperature" id="card-temp">
+          <div class="sensor-header">
+            <div class="sensor-label">
+              <svg viewBox="0 0 24 24" class="sensor-icon">
+                <path d="M15 13V5a 3 3 0 0 0-6 0v8a5 5 0 1 0 6 0z M12 17a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+              </svg>
+              <span>気温</span>
+              <span class="sensor-inline-value"><span id="temp" aria-live="polite">--</span><span class="unit">°C</span><span id="temp-trend-inline" class="trend-inline" aria-hidden="true"></span></span>
+            </div>
+          </div>
+          <div class="sensor-range" id="temp-range">範囲: --°C 〜 --°C</div>
+        </div>
+
+        <div class="sensor-card humidity" id="card-hum">
+          <div class="sensor-header">
+            <div class="sensor-label">
+              <svg viewBox="0 0 24 24" class="sensor-icon">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+              </svg>
+              <span>湿度</span>
+              <span class="sensor-inline-value"><span id="hum" aria-live="polite">--</span><span class="unit">%</span><span id="hum-trend-inline" class="trend-inline" aria-hidden="true"></span></span>
+            </div>
+          </div>
+          <div class="sensor-range" id="hum-range">範囲: --% 〜 --%</div>
+        </div>
+      </section>
+
+      <!-- 快適性インジケーター -->
+      <section class="comfort-section" aria-labelledby="comfort-title">
+        <h2 id="comfort-title">快適性指標</h2>
+        <div class="comfort-grid">
+          <div class="comfort-item">
+            <div class="comfort-label">体感温度</div>
+            <div id="feels-like" class="comfort-value">--°C</div>
+          </div>
+          <div class="comfort-item">
+            <div class="comfort-label">快適度</div>
+            <div id="comfort-level" class="comfort-value">--</div>
+          </div>
+          <div class="comfort-item">
+            <div class="comfort-label">推奨行動</div>
+            <div id="comfort-advice" class="comfort-value">--</div>
+          </div>
+          <div class="comfort-item">
+            <div class="comfort-label">不快指数</div>
+            <div id="discomfort-index" class="comfort-value">--</div>
+          </div>
+        </div>
+        <div class="comfort-bar">
+          <div id="comfort-indicator" class="comfort-progress"></div>
+        </div>
+      </section>
+
+      <!-- システムイベント -->
+      <section class="log-section event-log-section" aria-labelledby="events-title">
+        <div class="event-header">
+          <div class="event-title-area">
+            <h2 id="events-title">
+              <svg viewBox="0 0 24 24" class="section-icon" aria-hidden="true">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              システムイベント
+            </h2>
+            <span id="log-stats" class="event-stats">表示中: 0/0 件</span>
+          </div>
+
+          <div class="event-toolbar">
+            <div class="toolbar-row">
+              <div class="search-container">
+                <input id="log-search" type="text" placeholder="🔍 ログを検索..." class="search-input" aria-label="ログ検索">
+              </div>
+              <div class="action-buttons">
+                <button id="clearLogs" class="btn-action clear" type="button" title="ログをクリア">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                  クリア
+                </button>
+                <button id="download-log" class="btn-action download" type="button" title="ログをダウンロード">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/></svg>
+                  ダウンロード
+                </button>
+              </div>
+            </div>
+
+            <div class="toolbar-row filters-row">
+              <div class="filter-panel">
+                <div class="filter-section">
+                  <h4 class="filter-title">📂 カテゴリ</h4>
+                  <div class="filter-chips">
+                    <label class="chip sensor"><input type="checkbox" id="filter-sensor"><span>🌡️ センサー</span></label>
+                    <label class="chip network"><input type="checkbox" id="filter-network"><span>📡 ネットワーク</span></label>
+                    <label class="chip cloud"><input type="checkbox" id="filter-cloud"><span>☁️ クラウド</span></label>
+                    <label class="chip system"><input type="checkbox" id="filter-system"><span>⚙️ システム</span></label>
+                    <label class="chip general"><input type="checkbox" id="filter-general"><span>📝 一般</span></label>
+                  </div>
+                </div>
+
+                <div class="filter-divider"></div>
+
+                <div class="filter-section">
+                  <h4 class="filter-title">🎚️ レベル</h4>
+                  <div class="filter-chips">
+                    <label class="chip level debug"><input type="checkbox" id="filter-debug"><span>🔍 Debug</span></label>
+                    <label class="chip level info"><input type="checkbox" id="filter-info"><span>ℹ️ Info</span></label>
+                    <label class="chip level warning"><input type="checkbox" id="filter-warning"><span>⚠️ Warning</span></label>
+                    <label class="chip level error"><input type="checkbox" id="filter-error" checked><span>❌ Error</span></label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="quick-actions">
+                <button id="enableAllCategories" class="btn-quick" type="button" title="すべてのカテゴリを有効化">全カテゴリON</button>
+                <button id="disableAllCategories" class="btn-quick" type="button" title="すべてのカテゴリを無効化">全カテゴリOFF</button>
+                <button id="enableAllLevels" class="btn-quick" type="button" title="すべてのレベルを有効化">全レベルON</button>
+                <button id="errorOnlyFilter" class="btn-quick error" type="button" title="エラーのみ表示">エラーのみ</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="event-content">
+          <div id="log" class="event-log" aria-live="polite" aria-label="システムイベントログ"></div>
+        </div>
+      </section>
+
+      <!-- システム情報 -->
+      <section class="system-section" aria-labelledby="system-title">
+        <h2 id="system-title">システム情報</h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">デバイス</span>
+            <span class="info-value">ESP32-S3</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">センサー</span>
+            <span class="info-value">DHT22</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">通信</span>
+            <span class="info-value">HTTP Polling</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">ThingSpeak</span>
+            <span id="thingspeak-status" class="info-value">確認中...</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">チャンネルID</span>
+            <span class="info-value">
+              <a id="ts-channel-link" href="https://thingspeak.com/channels/3079476" target="_blank" rel="noopener" class="info-link">3079476</a>
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">データ形式</span>
+            <span class="info-value">
+              <a id="ts-json-link" href="https://api.thingspeak.com/channels/3079476/feeds.json?results=5" target="_blank" rel="noopener" class="info-link json">JSON</a> |
+              <a id="ts-csv-link" href="https://api.thingspeak.com/channels/3079476/feeds.csv?results=20" target="_blank" rel="noopener" class="info-link csv">CSV</a>
+            </span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-links">
+          <a href="/health" target="_blank" rel="noopener" aria-label="システムヘルス確認" class="footer-link">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            ヘルス
+          </a>
+          <a href="/config" target="_blank" rel="noopener" aria-label="設定確認" class="footer-link">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12A3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.66Z"/></svg>
+            設定
+          </a>
+          <a id="ts-footer-link" href="https://thingspeak.com/channels/3079476" target="_blank" rel="noopener" aria-label="ThingSpeakチャンネル" class="footer-link">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+            ThingSpeak
+          </a>
+          <a id="ts-footer-json" href="https://api.thingspeak.com/channels/3079476/feeds.json?results=10" target="_blank" rel="noopener" aria-label="最新データJSON" class="footer-link">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/></svg>
+            データ
+          </a>
+        </div>
+        <div class="footer-info">
+          <p class="footer-text">ESP32-S3 DHT22 Environmental Monitor</p>
+          <p class="footer-meta">リアルタイム環境データ監視システム</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>

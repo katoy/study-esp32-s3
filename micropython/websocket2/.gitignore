@@ -1,0 +1,148 @@
+# ============================================
+# ESP32-S3 MicroPython プロジェクト .gitignore
+# ============================================
+
+# === 機密情報・設定ファイル ===
+# WiFi認証情報（絶対にコミットしない）
+wifi_config.py
+config.json
+secrets.json
+credentials.txt
+
+# API キー・トークン
+*.key
+*.token
+api_keys.py
+thingspeak_config.py
+
+# === ESP32-S3 / MicroPython関連 ===
+# デバイス固有ファイル
+boot.py.backup
+main.py.backup
+*.mpy
+
+# esptool関連
+firmware*.bin
+flash_*.bin
+bootloader*.bin
+partitions*.bin
+
+# MicroPython REPL履歴
+.repl_history
+micropython.log
+
+# === デプロイ・ビルド関連 ===
+# デプロイログ
+deploy.log
+deployment_*.log
+transfer.log
+
+# 一時ファイル
+*.tmp
+*.temp
+.deploy_cache/
+.build/
+
+# === Python開発環境 ===
+# Byte-compiled / optimized files
+__pycache__/
+*.pyc
+*.pyo
+*.$py.class
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+micropython_env/
+
+# IDE設定
+.vscode/
+.thonny/
+*.code-workspace
+
+# === システムファイル ===
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.nfs*
+
+# === ログ・データファイル ===
+# アプリケーションログ
+*.log
+logs/
+sensor_data.csv
+temperature_log.txt
+humidity_log.txt
+
+# デバッグ出力
+debug_*.txt
+error_*.txt
+trace_*.log
+
+# === 開発・テスト関連 ===
+# テスト結果
+test_results/
+coverage.xml
+.pytest_cache/
+.coverage
+
+# ドキュメント生成
+docs/_build/
+site/
+
+# === バックアップファイル ===
+# エディタバックアップ
+*.bak
+*.backup
+*~
+*.swp
+*.swo
+
+# プロジェクトバックアップ
+project_backup_*/
+old_versions/
+
+# === ハードウェア・回路関連 ===
+# 回路図・基板データ（バイナリファイル）
+*.fzz
+*.sch
+*.pcb
+*.kicad_pro
+*.kicad_sch
+
+# === 開発メモ・TODO ===
+# 個人メモ
+notes.txt
+todo.txt
+NOTES.md
+TODO.md
+
+# === サードパーティライブラリ（ローカル） ===
+# 外部ライブラリ（micropython-lib等）
+lib/
+libraries/
+external/
+
+# === プロジェクト固有の除外 ===
+# 実験・テスト用ファイル
+experiment_*.py
+test_sensor.py
+debug_*.py
+scratch_*.py
+
+# 設定ファイルの例（コミット対象外）
+wifi_config_local.py
+device_config.py
