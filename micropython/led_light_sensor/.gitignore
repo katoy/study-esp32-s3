@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+
+# MicroPython
+.micropy/
+build/
+dist/
+frozen/
+webrepl_cfg.py
+
+# MicroPython specific
+boot.py.bak
+main.py.bak
+*.mpy
+.ampy
+
+# Editor/OS specific
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ESP32/Development
+*.bin
+*.elf
+*.map
+flash_args
+
+# Logs
+*.log
+logs/
